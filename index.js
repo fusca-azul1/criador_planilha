@@ -2,10 +2,23 @@ const { Telegraf } = require('telegraf');
 const fs = require('fs-extra');
 const XLSX = require('xlsx');
 const fetch = require('node-fetch');
+const express = require('express');
 
-require('dotenv').config();
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
+const app = express();
+
+// 🌐 Rota pra manter online
+app.get('/', (req, res) => {
+    res.send('Bot online');
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Servidor web rodando na porta ${PORT}`);
+});
+
+// 📊 Config
 const NOME_PLANILHA = 'Base_Dados.xlsx';
 
 let batch_control = {
@@ -65,7 +78,7 @@ function salvarExcel(novoDado) {
     return true;
 }
 
-// 🚫 Anti flood (retry automático)
+// 🚫 Anti flood
 async function enviarComRetry(ctx, texto) {
     try {
         await ctx.telegram.sendMessage(batch_control.chatId, texto);
@@ -81,7 +94,7 @@ async function enviarComRetry(ctx, texto) {
     }
 }
 
-// ⏳ Finalizar lote (UMA mensagem)
+// ⏳ Finalizar lote
 function finalizarServico(ctx) {
     batch_control.timer = setTimeout(async () => {
         const texto = `✅ Serviço completo\n📥 Processados: ${batch_control.processados}\n♻️ Repetidos: ${batch_control.repetidos}`;
@@ -154,7 +167,6 @@ bot.on('document', async (ctx) => {
             batch_control.processados++;
         }
 
-        // apagar mensagem do usuário
         ctx.deleteMessage().catch(() => {});
 
     } catch (e) {
