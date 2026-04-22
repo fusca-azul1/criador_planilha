@@ -1,0 +1,17 @@
+{
+  "name": "telegram-bot",
+  "version": "1.0.0",
+  "description": "Bot Telegram extrator de dados para Excel",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "jorge",
+  "license": "ISC",
+  "dependencies": {
+    "telegraf": "^4.16.3",
+    "xlsx": "^0.18.5",
+    "fs-extra": "^11.2.0",
+    "node-fetch": "^2.6.7"
+  }
+}
